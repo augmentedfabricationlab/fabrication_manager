@@ -61,6 +61,14 @@ Make sure you setup your local development environment correctly:
 
     pip install -r requirements-dev.txt
     invoke add-to-rhino
+    
+* Alternatively, follow these steps:
+
+::
+
+    pip install -e your_filepath_to_fabrication_control
+    python -m compas_rhino.install -p assembly_information_model -v 7.0
+
 
 **You're ready to start working!**
 
