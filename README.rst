@@ -67,7 +67,7 @@ Make sure you setup your local development environment correctly:
 ::
 
     pip install -e your_filepath_to_fabrication_control
-    python -m compas_rhino.install -p assembly_information_model -v 7.0
+    python -m compas_rhino.install -p fabrication_control -v 7.0
 
 
 **You're ready to start working!**
