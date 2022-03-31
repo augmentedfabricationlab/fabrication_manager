@@ -20,6 +20,5 @@ Describe typical classes found in project
 
 """
 
-from .fabrication import Fabrication
-
-__all__ = ['Fabrication']
+from .communication import *
+from .fabrication import *
