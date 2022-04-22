@@ -5,15 +5,18 @@ __all__ = [
 ]
 
 
-class Fabrication(object):
+class Fabrication():
     def __init__(self):
         self.tasks = {}
         self._stop_thread = False
         self.current_task = None
+        self.current_task_key = None
+        self.log_messages = []
 
     def add_task(self, task, key=None):
         if key is None:
             key = len(self.tasks)
+        task.key = key
         self.tasks[key] = task
 
     def set_tasks(self, tasks):
@@ -25,6 +28,8 @@ class Fabrication(object):
             for task in self.tasks.values():
                 if not task.is_completed:
                     return True
+                elif task.is_completed and task.is_running:
+                    return True
             else:
                 return False
         return False
@@ -35,6 +40,7 @@ class Fabrication(object):
         for key in keys:
             task = self.tasks[key]
             if not task.is_completed:
+                self.current_task_key = key
                 return task
         else:
             # No next task available
@@ -66,10 +72,10 @@ class Fabrication(object):
         if self.tasks_available():
             self._create_threads()
             self.task_thread.start()
-            print("Started task thread")
+            self.log("FABRICATION: Started task thread")
         else:
-            print("No_tasks_available")
-    
+            self.log("FABRICATION: No tasks available")
+
     def reset(self):
         self.stop()
         for task in self.tasks.values():
@@ -78,21 +84,30 @@ class Fabrication(object):
 
     def run(self, stop_thread):
         self.current_task = self.get_next_task()
+        self.log("FABRICATION: ---STARTING FABRICATION---")
         while self.tasks_available():
+            if (self.current_task is None
+                or (self.current_task.is_completed
+                    and not self.current_task.is_running)):
+                self.current_task = self.get_next_task()
+            elif (not self.current_task.is_completed
+                  or self.current_task.is_running):
+                self.current_task.perform(stop_thread)
+                self.log(self.current_task.log_messages)
             if stop_thread():
                 break
-            elif self.current_task is None or self.current_task.is_completed:
-                self.current_task = self.get_next_task()
-            elif not self.current_task.is_completed:
-                self.current_task.perform()
         else:
-            self.log("ALL TASKS DONE")
-            self.log("STOPPING FABRICATION")
+            self.log("FABRICATION: All tasks done")
+            self.log("FABRICATION: ---STOPPING FABRICATION---")
 
     def log(self, msg):
-        self.log_messages.append("FABRICATION: " + str(msg))
-        if len(self.log_messages) > self.log_messages_length:
-            self.log_messages = self.log_messages[-self.log_messages_length:] 
+        if isinstance(msg, list):
+            for m in msg:
+                self.log(m)
+        elif str(msg) not in self.log_messages:
+            self.log_messages.append(str(msg))
+        # if len(self.log_messages) > self.log_messages_length:
+        #     self.log_messages = self.log_messages[-self.log_messages_length:]
 
 
 if __name__ == '__main__':

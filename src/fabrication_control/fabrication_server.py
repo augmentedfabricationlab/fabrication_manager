@@ -1,7 +1,7 @@
 import sys
 from threading import Thread
 from .fabrication import Fabrication
-from ..communication import TCPFeedbackServer
+from .communication import TCPFeedbackServer
 if sys.version_info[0] == 3:
     from queue import Queue
 else:
@@ -32,7 +32,9 @@ class FabricationFeedbackServer(TCPFeedbackServer):
 
 class Fabrication_with_server(Fabrication):
     def __init__(self):
-        super().__init__()
+        self.tasks = {}
+        self._stop_thread = False
+        self.current_task = None
         self.server = None
 
     def set_feedback_server(self, ip, port):
@@ -44,5 +46,11 @@ class Fabrication_with_server(Fabrication):
         self.server.shutdown()
 
     def start(self):
+        self._join_threads()
         self.server.start()
-        super().start()
+        if self.tasks_available():
+            self._create_threads()
+            self.task_thread.start()
+            print("Started task thread")
+        else:
+            print("No_tasks_available")

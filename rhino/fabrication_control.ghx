@@ -48,10 +48,10 @@
             <chunk name="Projection">
               <items count="2">
                 <item name="Target" type_name="gh_drawing_point" type_code="30">
-                  <X>412</X>
-                  <Y>125</Y>
+                  <X>532</X>
+                  <Y>339</Y>
                 </item>
-                <item name="Zoom" type_name="gh_single" type_code="5">0.443705469</item>
+                <item name="Zoom" type_name="gh_single" type_code="5">0.7225001</item>
               </items>
             </chunk>
             <chunk name="Views">
@@ -73,8 +73,8 @@
           <chunks count="1">
             <chunk name="Library" index="0">
               <items count="6">
-                <item name="AssemblyFullName" type_name="gh_string" type_code="10">GhPython, Version=7.15.22039.13001, Culture=neutral, PublicKeyToken=null</item>
-                <item name="AssemblyVersion" type_name="gh_string" type_code="10">7.15.22039.13001</item>
+                <item name="AssemblyFullName" type_name="gh_string" type_code="10">GhPython, Version=7.17.22102.5001, Culture=neutral, PublicKeyToken=null</item>
+                <item name="AssemblyVersion" type_name="gh_string" type_code="10">7.17.22102.5001</item>
                 <item name="Author" type_name="gh_string" type_code="10"></item>
                 <item name="Id" type_name="gh_guid" type_code="9">00000000-0000-0000-0000-000000000000</item>
                 <item name="Name" type_name="gh_string" type_code="10"></item>
@@ -85,9 +85,9 @@
         </chunk>
         <chunk name="DefinitionObjects">
           <items count="1">
-            <item name="ObjectCount" type_name="gh_int32" type_code="3">26</item>
+            <item name="ObjectCount" type_name="gh_int32" type_code="3">27</item>
           </items>
-          <chunks count="26">
+          <chunks count="27">
             <chunk name="Object" index="0">
               <items count="2">
                 <item name="GUID" type_name="gh_guid" type_code="9">c552a431-af5b-46a9-a8a4-0fcbc27ef596</item>
@@ -190,7 +190,7 @@ if stop:
     fabrication.stop()
     
 if reset:
-    print "resuming process"
+    print "resetting process"
     fabrication.reset()
 
 
@@ -200,12 +200,12 @@ if reset:
 </item>
                     <item name="Description" type_name="gh_string" type_code="10">GhPython provides a Python script component</item>
                     <item name="EditorLocation" type_name="gh_drawing_point" type_code="30">
-                      <X>-2285</X>
-                      <Y>-146</Y>
+                      <X>-2435</X>
+                      <Y>-264</Y>
                     </item>
                     <item name="EditorSize" type_name="gh_drawing_size" type_code="32">
-                      <W>1635</W>
-                      <H>1211</H>
+                      <W>892</W>
+                      <H>751</H>
                     </item>
                     <item name="Hidden" type_name="gh_bool" type_code="1">true</item>
                     <item name="HideInput" type_name="gh_bool" type_code="1">true</item>
@@ -516,8 +516,8 @@ if reset:
                     <chunk name="Attributes">
                       <items count="1">
                         <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
-                          <X>177</X>
-                          <Y>196</Y>
+                          <X>178</X>
+                          <Y>194</Y>
                           <W>113</W>
                           <H>22</H>
                         </item>
@@ -776,14 +776,15 @@ if reset:
               </items>
               <chunks count="1">
                 <chunk name="Container">
-                  <items count="9">
+                  <items count="10">
                     <item name="Description" type_name="gh_string" type_code="10">A panel for custom notes and text values</item>
                     <item name="InstanceGuid" type_name="gh_guid" type_code="9">caca4735-1024-4296-9489-604cd8f50a8d</item>
                     <item name="Name" type_name="gh_string" type_code="10">Panel</item>
                     <item name="NickName" type_name="gh_string" type_code="10">log_messages</item>
                     <item name="Optional" type_name="gh_bool" type_code="1">false</item>
                     <item name="ScrollRatio" type_name="gh_double" type_code="6">1</item>
-                    <item name="SourceCount" type_name="gh_int32" type_code="3">0</item>
+                    <item name="Source" index="0" type_name="gh_guid" type_code="9">16d7035a-f678-48cb-9c62-7b978497515e</item>
+                    <item name="SourceCount" type_name="gh_int32" type_code="3">1</item>
                     <item name="UserText" type_name="gh_string" type_code="10">Double click to edit panel content…</item>
                     <item name="WireDisplay" type_name="gh_int32" type_code="3">1</item>
                   </items>
@@ -919,18 +920,20 @@ if reset:
                 <chunk name="Container">
                   <items count="12">
                     <item name="CodeInput" type_name="gh_string" type_code="10">from scriptcontext import sticky as st
-from fabrication_control.fabrication.fabrication import Fabrication
+from fabrication_control.fabrication import Fabrication
 
-fabrication = Fabrication()
+if init:
+    fabrication = Fabrication()
+    st["fabrication"] = fabrication
 
-st["fabrication"] = fabrication
+fabrication = st["fabrication"]
 
 
 </item>
                     <item name="Description" type_name="gh_string" type_code="10">GhPython provides a Python script component</item>
                     <item name="EditorLocation" type_name="gh_drawing_point" type_code="30">
-                      <X>-2496</X>
-                      <Y>-144</Y>
+                      <X>1946</X>
+                      <Y>33</Y>
                     </item>
                     <item name="EditorSize" type_name="gh_drawing_size" type_code="32">
                       <W>916</W>
@@ -1089,12 +1092,12 @@ if set_tasks == True:
 </item>
                     <item name="Description" type_name="gh_string" type_code="10">GhPython provides a Python script component</item>
                     <item name="EditorLocation" type_name="gh_drawing_point" type_code="30">
-                      <X>-1594</X>
-                      <Y>-160</Y>
+                      <X>-1236</X>
+                      <Y>-349</Y>
                     </item>
                     <item name="EditorSize" type_name="gh_drawing_size" type_code="32">
-                      <W>1069</W>
-                      <H>736</H>
+                      <W>553</W>
+                      <H>581</H>
                     </item>
                     <item name="HideInput" type_name="gh_bool" type_code="1">true</item>
                     <item name="HideOutput" type_name="gh_bool" type_code="1">false</item>
@@ -1168,7 +1171,7 @@ if set_tasks == True:
                             <item name="AllowTreeAccess" type_name="gh_bool" type_code="1">true</item>
                             <item name="Description" type_name="gh_string" type_code="10">Script input tasks.</item>
                             <item name="InstanceGuid" type_name="gh_guid" type_code="9">43b3cd66-3520-4316-92c3-ed508e209166</item>
-                            <item name="Name" type_name="gh_string" type_code="10">aim</item>
+                            <item name="Name" type_name="gh_string" type_code="10">tasks</item>
                             <item name="NickName" type_name="gh_string" type_code="10">tasks</item>
                             <item name="Optional" type_name="gh_bool" type_code="1">true</item>
                             <item name="ScriptParamAccess" type_name="gh_int32" type_code="3">1</item>
@@ -1297,21 +1300,28 @@ if set_tasks == True:
 
 fabrication = st["fabrication"]
 
-state = "THREAD PAUSED" if fabrication.is_alive() and fabrication.is_paused() else "THREAD RUNNING" if fabrication.is_alive() and fabrication.is_paused() == False else "THREAD STOPPED"
-iterations = fabrication.iterations
+if hasattr(fabrication, "task_thread"):
+    if fabrication.task_thread.is_alive():
+        state = "THREAD RUNNING"
+    else:
+        state = "THREAD STOPPED"
 
-num_tasks_left = len(fabrication.tasks)
-print num_tasks_left
-log_messages = fabrication.get_log_messages()
+num_tasks = len(fabrication.tasks)
+if fabrication.current_task_key is not None:
+    num_current_task = fabrication.current_task_key+1
+else:
+    num_current_task = 0
+num_tasks_left = num_tasks-num_current_task
+log_messages = fabrication.log_messages
 </item>
                     <item name="Description" type_name="gh_string" type_code="10">GhPython provides a Python script component</item>
                     <item name="EditorLocation" type_name="gh_drawing_point" type_code="30">
-                      <X>-32000</X>
-                      <Y>-32000</Y>
+                      <X>-2543</X>
+                      <Y>-201</Y>
                     </item>
                     <item name="EditorSize" type_name="gh_drawing_size" type_code="32">
-                      <W>160</W>
-                      <H>28</H>
+                      <W>939</W>
+                      <H>732</H>
                     </item>
                     <item name="HideInput" type_name="gh_bool" type_code="1">true</item>
                     <item name="HideOutput" type_name="gh_bool" type_code="1">false</item>
@@ -1327,9 +1337,9 @@ log_messages = fabrication.get_log_messages()
                       <items count="2">
                         <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
                           <X>549</X>
-                          <Y>58</Y>
-                          <W>145</W>
-                          <H>120</H>
+                          <Y>56</Y>
+                          <W>126</W>
+                          <H>124</H>
                         </item>
                         <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
                           <X>563</X>
@@ -1338,16 +1348,17 @@ log_messages = fabrication.get_log_messages()
                       </items>
                     </chunk>
                     <chunk name="ParameterData">
-                      <items count="7">
+                      <items count="8">
                         <item name="InputCount" type_name="gh_int32" type_code="3">0</item>
-                        <item name="OutputCount" type_name="gh_int32" type_code="3">5</item>
+                        <item name="OutputCount" type_name="gh_int32" type_code="3">6</item>
                         <item name="OutputId" index="0" type_name="gh_guid" type_code="9">3ede854e-c753-40eb-84cb-b48008f14fd4</item>
                         <item name="OutputId" index="1" type_name="gh_guid" type_code="9">8ec86459-bf01-4409-baee-174d0d2b13d0</item>
                         <item name="OutputId" index="2" type_name="gh_guid" type_code="9">8ec86459-bf01-4409-baee-174d0d2b13d0</item>
                         <item name="OutputId" index="3" type_name="gh_guid" type_code="9">8ec86459-bf01-4409-baee-174d0d2b13d0</item>
                         <item name="OutputId" index="4" type_name="gh_guid" type_code="9">8ec86459-bf01-4409-baee-174d0d2b13d0</item>
+                        <item name="OutputId" index="5" type_name="gh_guid" type_code="9">8ec86459-bf01-4409-baee-174d0d2b13d0</item>
                       </items>
-                      <chunks count="5">
+                      <chunks count="6">
                         <chunk name="OutputParam" index="0">
                           <items count="6">
                             <item name="Description" type_name="gh_string" type_code="10">The execution information, as output and error streams</item>
@@ -1362,13 +1373,13 @@ log_messages = fabrication.get_log_messages()
                               <items count="2">
                                 <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
                                   <X>578</X>
-                                  <Y>60</Y>
-                                  <W>114</W>
-                                  <H>23</H>
+                                  <Y>58</Y>
+                                  <W>95</W>
+                                  <H>20</H>
                                 </item>
                                 <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
-                                  <X>635</X>
-                                  <Y>71.6</Y>
+                                  <X>625.5</X>
+                                  <Y>68</Y>
                                 </item>
                               </items>
                             </chunk>
@@ -1388,13 +1399,13 @@ log_messages = fabrication.get_log_messages()
                               <items count="2">
                                 <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
                                   <X>578</X>
-                                  <Y>83</Y>
-                                  <W>114</W>
-                                  <H>23</H>
+                                  <Y>78</Y>
+                                  <W>95</W>
+                                  <H>20</H>
                                 </item>
                                 <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
-                                  <X>635</X>
-                                  <Y>94.8</Y>
+                                  <X>625.5</X>
+                                  <Y>88</Y>
                                 </item>
                               </items>
                             </chunk>
@@ -1402,9 +1413,9 @@ log_messages = fabrication.get_log_messages()
                         </chunk>
                         <chunk name="OutputParam" index="2">
                           <items count="6">
-                            <item name="Description" type_name="gh_string" type_code="10">Script output iterations.</item>
+                            <item name="Description" type_name="gh_string" type_code="10">Script output num_tasks.</item>
                             <item name="InstanceGuid" type_name="gh_guid" type_code="9">57b2158b-813e-408a-a4f0-997bc1b7876d</item>
-                            <item name="Name" type_name="gh_string" type_code="10">num_tasks</item>
+                            <item name="Name" type_name="gh_string" type_code="10">num_tasks_left</item>
                             <item name="NickName" type_name="gh_string" type_code="10">num_tasks</item>
                             <item name="Optional" type_name="gh_bool" type_code="1">false</item>
                             <item name="SourceCount" type_name="gh_int32" type_code="3">0</item>
@@ -1414,13 +1425,13 @@ log_messages = fabrication.get_log_messages()
                               <items count="2">
                                 <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
                                   <X>578</X>
-                                  <Y>106</Y>
-                                  <W>114</W>
-                                  <H>23</H>
+                                  <Y>98</Y>
+                                  <W>95</W>
+                                  <H>20</H>
                                 </item>
                                 <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
-                                  <X>635</X>
-                                  <Y>118</Y>
+                                  <X>625.5</X>
+                                  <Y>108</Y>
                                 </item>
                               </items>
                             </chunk>
@@ -1428,7 +1439,7 @@ log_messages = fabrication.get_log_messages()
                         </chunk>
                         <chunk name="OutputParam" index="3">
                           <items count="6">
-                            <item name="Description" type_name="gh_string" type_code="10">Script output num_tasks_left.</item>
+                            <item name="Description" type_name="gh_string" type_code="10">Script output num_current_task.</item>
                             <item name="InstanceGuid" type_name="gh_guid" type_code="9">57617f58-598b-43ac-a233-00e1049fd35a</item>
                             <item name="Name" type_name="gh_string" type_code="10">num_current_task</item>
                             <item name="NickName" type_name="gh_string" type_code="10">num_current_task</item>
@@ -1440,13 +1451,13 @@ log_messages = fabrication.get_log_messages()
                               <items count="2">
                                 <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
                                   <X>578</X>
-                                  <Y>129</Y>
-                                  <W>114</W>
-                                  <H>23</H>
+                                  <Y>118</Y>
+                                  <W>95</W>
+                                  <H>20</H>
                                 </item>
                                 <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
-                                  <X>635</X>
-                                  <Y>141.2</Y>
+                                  <X>625.5</X>
+                                  <Y>128</Y>
                                 </item>
                               </items>
                             </chunk>
@@ -1454,10 +1465,10 @@ log_messages = fabrication.get_log_messages()
                         </chunk>
                         <chunk name="OutputParam" index="4">
                           <items count="6">
-                            <item name="Description" type_name="gh_string" type_code="10">Script variable fabrication state</item>
+                            <item name="Description" type_name="gh_string" type_code="10">Script output num_tasks_left.</item>
                             <item name="InstanceGuid" type_name="gh_guid" type_code="9">68305d04-f7f4-4f50-a836-ffe3540e7313</item>
-                            <item name="Name" type_name="gh_string" type_code="10">a</item>
-                            <item name="NickName" type_name="gh_string" type_code="10">num_tasks_remaining</item>
+                            <item name="Name" type_name="gh_string" type_code="10">num_tasks_remaining</item>
+                            <item name="NickName" type_name="gh_string" type_code="10">num_tasks_left</item>
                             <item name="Optional" type_name="gh_bool" type_code="1">false</item>
                             <item name="SourceCount" type_name="gh_int32" type_code="3">0</item>
                           </items>
@@ -1466,13 +1477,39 @@ log_messages = fabrication.get_log_messages()
                               <items count="2">
                                 <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
                                   <X>578</X>
-                                  <Y>152</Y>
-                                  <W>114</W>
-                                  <H>24</H>
+                                  <Y>138</Y>
+                                  <W>95</W>
+                                  <H>20</H>
                                 </item>
                                 <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
-                                  <X>635</X>
-                                  <Y>164.4</Y>
+                                  <X>625.5</X>
+                                  <Y>148</Y>
+                                </item>
+                              </items>
+                            </chunk>
+                          </chunks>
+                        </chunk>
+                        <chunk name="OutputParam" index="5">
+                          <items count="6">
+                            <item name="Description" type_name="gh_string" type_code="10">Script output log_messages.</item>
+                            <item name="InstanceGuid" type_name="gh_guid" type_code="9">16d7035a-f678-48cb-9c62-7b978497515e</item>
+                            <item name="Name" type_name="gh_string" type_code="10">log_messages</item>
+                            <item name="NickName" type_name="gh_string" type_code="10">log_messages</item>
+                            <item name="Optional" type_name="gh_bool" type_code="1">false</item>
+                            <item name="SourceCount" type_name="gh_int32" type_code="3">0</item>
+                          </items>
+                          <chunks count="1">
+                            <chunk name="Attributes">
+                              <items count="2">
+                                <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
+                                  <X>578</X>
+                                  <Y>158</Y>
+                                  <W>95</W>
+                                  <H>20</H>
+                                </item>
+                                <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
+                                  <X>625.5</X>
+                                  <Y>168</Y>
                                 </item>
                               </items>
                             </chunk>
@@ -1702,12 +1739,11 @@ unload_modules("assembly_information_model")
               </items>
               <chunks count="1">
                 <chunk name="Container">
-                  <items count="10">
+                  <items count="9">
                     <item name="Description" type_name="gh_string" type_code="10">Manually or cyclically trigger updates of certain components.</item>
                     <item name="InstanceGuid" type_name="gh_guid" type_code="9">731bc382-d78c-4a32-9e49-e917ad75222e</item>
                     <item name="Interval" type_name="gh_int32" type_code="3">100</item>
                     <item name="LockTargets" type_name="gh_bool" type_code="1">false</item>
-                    <item name="Locked" type_name="gh_bool" type_code="1">true</item>
                     <item name="Name" type_name="gh_string" type_code="10">Trigger</item>
                     <item name="NickName" type_name="gh_string" type_code="10"></item>
                     <item name="Target" index="0" type_name="gh_guid" type_code="9">95658636-b4e9-4143-b620-86bd72bb9c56</item>
@@ -1855,12 +1891,12 @@ unload_modules("assembly_information_model")
                 <chunk name="Container">
                   <items count="12">
                     <item name="CodeInput" type_name="gh_string" type_code="10">import time
-from fabrication_control.fabrication.task import Task
+from fabrication_control.task import Task
 
 class Task1(Task):
     def run(self, _stop_flag):
         # do something
-        print("This is task 1")
+        self.log("This is task 1")
         finished = True
         if finished:
             self.is_completed = True
@@ -1868,9 +1904,9 @@ class Task1(Task):
 class Task2(Task):
     def run(self, _stop_flag):
         # do something
-        print("Task 2 counting up")
+        self.log("Task 2 counting up")
         for i in range(10):
-            print("Counting: {}".format(i))
+            self.log("Counting: {}".format(i))
         finished = True
         if finished:
             self.is_completed = True
@@ -1878,26 +1914,27 @@ class Task2(Task):
 class Task3(Task):
     def run(self, _stop_flag):
         # do something
-        print("Task 3 starting...")
+        self.log("Task 3 starting...")
         current_time = time.time()
         while time.time()&lt;(current_time+1):
-            print("waiting...")
+            self.log("waiting...")
         else:
-            print("done waiting!")
+            self.log("done waiting!")
         finished = True
         if finished:
             self.is_completed = True
 
-task1 = Task1()
-task2 = Task2()
-task3 = Task3()
+if create:
+    task1 = Task1()
+    task2 = Task2()
+    task3 = Task3()
 
 tasks = [task1, task2, task3]
 </item>
                     <item name="Description" type_name="gh_string" type_code="10">GhPython provides a Python script component</item>
                     <item name="EditorLocation" type_name="gh_drawing_point" type_code="30">
-                      <X>0</X>
-                      <Y>115</Y>
+                      <X>-2405</X>
+                      <Y>-236</Y>
                     </item>
                     <item name="EditorSize" type_name="gh_drawing_size" type_code="32">
                       <W>708</W>
@@ -1916,29 +1953,61 @@ tasks = [task1, task2, task3]
                     <chunk name="Attributes">
                       <items count="2">
                         <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
-                          <X>226</X>
-                          <Y>145</Y>
-                          <W>65</W>
+                          <X>186</X>
+                          <Y>143</Y>
+                          <W>105</W>
                           <H>49</H>
                         </item>
                         <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
                           <X>240</X>
-                          <Y>170</Y>
+                          <Y>168</Y>
                         </item>
                       </items>
                     </chunk>
                     <chunk name="ParameterData">
-                      <items count="3">
-                        <item name="InputCount" type_name="gh_int32" type_code="3">0</item>
+                      <items count="4">
+                        <item name="InputCount" type_name="gh_int32" type_code="3">1</item>
+                        <item name="InputId" index="0" type_name="gh_guid" type_code="9">84fa917c-1ed8-4db3-8be1-7bdc4a6495a2</item>
                         <item name="OutputCount" type_name="gh_int32" type_code="3">1</item>
                         <item name="OutputId" index="0" type_name="gh_guid" type_code="9">8ec86459-bf01-4409-baee-174d0d2b13d0</item>
                       </items>
-                      <chunks count="1">
+                      <chunks count="2">
+                        <chunk name="InputParam" index="0">
+                          <items count="11">
+                            <item name="AllowTreeAccess" type_name="gh_bool" type_code="1">true</item>
+                            <item name="Description" type_name="gh_string" type_code="10">Script variable Tasks</item>
+                            <item name="InstanceGuid" type_name="gh_guid" type_code="9">7957c917-d00c-4465-b86a-2869ab3d86e6</item>
+                            <item name="Name" type_name="gh_string" type_code="10">create</item>
+                            <item name="NickName" type_name="gh_string" type_code="10">create</item>
+                            <item name="Optional" type_name="gh_bool" type_code="1">true</item>
+                            <item name="ScriptParamAccess" type_name="gh_int32" type_code="3">0</item>
+                            <item name="ShowTypeHints" type_name="gh_bool" type_code="1">true</item>
+                            <item name="Source" index="0" type_name="gh_guid" type_code="9">402fdef8-5b9d-475d-9086-7cb6073d7b48</item>
+                            <item name="SourceCount" type_name="gh_int32" type_code="3">1</item>
+                            <item name="TypeHintID" type_name="gh_guid" type_code="9">87f87f55-5b71-41f4-8aea-21d494016f81</item>
+                          </items>
+                          <chunks count="1">
+                            <chunk name="Attributes">
+                              <items count="2">
+                                <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
+                                  <X>188</X>
+                                  <Y>145</Y>
+                                  <W>37</W>
+                                  <H>45</H>
+                                </item>
+                                <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
+                                  <X>208</X>
+                                  <Y>167.5</Y>
+                                </item>
+                              </items>
+                            </chunk>
+                          </chunks>
+                        </chunk>
                         <chunk name="OutputParam" index="0">
                           <items count="6">
                             <item name="Description" type_name="gh_string" type_code="10">Script output tasks.</item>
                             <item name="InstanceGuid" type_name="gh_guid" type_code="9">280132cb-753c-4922-abe5-0763fcca82ce</item>
-                            <item name="Name" type_name="gh_string" type_code="10">tasks_output</item>
+                            <item name="Name" type_name="gh_string" type_code="10">tasks</item>
                             <item name="NickName" type_name="gh_string" type_code="10">tasks</item>
                             <item name="Optional" type_name="gh_bool" type_code="1">false</item>
                             <item name="SourceCount" type_name="gh_int32" type_code="3">0</item>
@@ -1948,13 +2017,13 @@ tasks = [task1, task2, task3]
                               <items count="2">
                                 <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
                                   <X>255</X>
-                                  <Y>147</Y>
+                                  <Y>145</Y>
                                   <W>34</W>
                                   <H>45</H>
                                 </item>
                                 <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
                                   <X>272</X>
-                                  <Y>169.5</Y>
+                                  <Y>167.5</Y>
                                 </item>
                               </items>
                             </chunk>
@@ -2029,6 +2098,38 @@ tasks = [task1, task2, task3]
                 </chunk>
               </chunks>
             </chunk>
+            <chunk name="Object" index="26">
+              <items count="2">
+                <item name="GUID" type_name="gh_guid" type_code="9">a8b97322-2d53-47cd-905e-b932c3ccd74e</item>
+                <item name="Name" type_name="gh_string" type_code="10">Button</item>
+              </items>
+              <chunks count="1">
+                <chunk name="Container">
+                  <items count="8">
+                    <item name="Description" type_name="gh_string" type_code="10">Button object with two values</item>
+                    <item name="ExpressionNormal" type_name="gh_string" type_code="10">False</item>
+                    <item name="ExpressionPressed" type_name="gh_string" type_code="10">True</item>
+                    <item name="InstanceGuid" type_name="gh_guid" type_code="9">402fdef8-5b9d-475d-9086-7cb6073d7b48</item>
+                    <item name="Name" type_name="gh_string" type_code="10">Button</item>
+                    <item name="NickName" type_name="gh_string" type_code="10">Button</item>
+                    <item name="Optional" type_name="gh_bool" type_code="1">false</item>
+                    <item name="SourceCount" type_name="gh_int32" type_code="3">0</item>
+                  </items>
+                  <chunks count="1">
+                    <chunk name="Attributes">
+                      <items count="1">
+                        <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
+                          <X>51</X>
+                          <Y>156</Y>
+                          <W>103</W>
+                          <H>22</H>
+                        </item>
+                      </items>
+                    </chunk>
+                  </chunks>
+                </chunk>
+              </chunks>
+            </chunk>
           </chunks>
         </chunk>
       </chunks>
@@ -2036,7 +2137,7 @@ tasks = [task1, task2, task3]
     <chunk name="Thumbnail">
       <items count="1">
         <item name="Thumbnail" type_name="gh_drawing_bitmap" type_code="37">
-          <bitmap length="3036">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</bitmap>
+          <bitmap length="5240">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</bitmap>
         </item>
       </items>
     </chunk>
