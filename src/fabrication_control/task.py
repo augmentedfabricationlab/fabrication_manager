@@ -8,6 +8,7 @@ __all__ = [
 class Task():
     def __init__(self):
         self.key = None
+        self.parallelizable = False
         self.is_completed = False
         self.is_running = False
         self._stop_flag = True

@@ -9,6 +9,9 @@ class Fabrication():
     def __init__(self):
         self.tasks = {}
         self._stop_thread = False
+        self.parallelize = False
+        self.max_parallel_tasks = 10
+        self.running_tasks = []
         self.current_task = None
         self.current_task_key = None
         self.log_messages = []
@@ -39,7 +42,7 @@ class Fabrication():
         keys.sort()
         for key in keys:
             task = self.tasks[key]
-            if not task.is_completed:
+            if not task.is_completed and not task.is_running:
                 self.current_task_key = key
                 return task
         else:
@@ -57,21 +60,21 @@ class Fabrication():
 
     def _join_threads(self):
         self._stop_thread = True
-        if hasattr(self, "task_thread"):
-            self.task_thread.join()
-            del self.task_thread
+        if hasattr(self, "fab_thread"):
+            self.fab_thread.join()
+            del self.fab_thread
 
     def _create_threads(self):
         self._stop_thread = False
-        self.task_thread = Thread(target=self.run,
+        self.fab_thread = Thread(target=self.run,
                                   args=(lambda: self._stop_thread,))
-        self.task_thread.daemon = True
+        self.fab_thread.daemon = True
 
     def start(self):
         self._join_threads()
         if self.tasks_available():
             self._create_threads()
-            self.task_thread.start()
+            self.fab_thread.start()
             self.log("FABRICATION: Started task thread")
         else:
             self.log("FABRICATION: No tasks available")
@@ -83,17 +86,32 @@ class Fabrication():
         self.current_task = None
 
     def run(self, stop_thread):
-        self.current_task = self.get_next_task()
+        self.current_task = None
         self.log("FABRICATION: ---STARTING FABRICATION---")
         while self.tasks_available():
-            if (self.current_task is None
-                or (self.current_task.is_completed
-                    and not self.current_task.is_running)):
+            if (self.get_next_task() is not None
+                and (self.current_task is None
+                     or (self.current_task.is_completed
+                         and not self.current_task.is_running)
+                     or (not self.current_task.is_completed
+                         and self.parallelize
+                         and self.current_task.is_running
+                         and self.current_task.parallelizable
+                         and len(self.running_tasks) < self.max_parallel_tasks)
+                    )
+                ):
                 self.current_task = self.get_next_task()
             elif (not self.current_task.is_completed
-                  or self.current_task.is_running):
+                  and not self.current_task.is_running):
                 self.current_task.perform(stop_thread)
+                self.running_tasks.append(self.current_task)
                 self.log(self.current_task.log_messages)
+            elif len(self.running_tasks) > 0:
+                for task in self.running_tasks:
+                    task.perform(stop_thread)
+                    self.log(task.log_messages)
+                    if task.is_completed and not task.is_running:
+                        self.running_tasks.remove(task)
             if stop_thread():
                 break
         else:
