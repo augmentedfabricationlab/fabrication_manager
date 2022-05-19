@@ -5,7 +5,7 @@ __all__ = [
 ]
 
 
-class Fabrication():
+class Fabrication(object):
     def __init__(self, server=None):
         # General
         self.tasks = {}
