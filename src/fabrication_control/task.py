@@ -5,42 +5,21 @@ __all__ = [
 ]
 
 
-class Task():
-    def __init__(self):
-        self.key = None
+class Task(object):
+    def __init__(self, key=None):
+        self.key = key
         self.parallelizable = False
         self.is_completed = False
         self.is_running = False
-        self._stop_flag = True
+        self.stop_thread = False
         self.log_messages = []
 
-    @property
-    def data(self):
-        return {
-            'key': self.key,
-            'is_completed': self.is_completed,
-            'is_running': self.is_running,
-            '_stop_flag': self._stop_flag,
-        }
-
-    @data.setter
-    def data(self, data):
-        self.key = data['key']
-        self.is_completed = data['is_completed']
-        self.is_running = data['is_running']
-        self._stop_flag = data['_stop_flag']
-
-    @classmethod
-    def from_data(cls, data):
-        obj = cls()
-        obj.data = data
-
-    def perform(self, _stop_flag):
-        self._stop_flag = _stop_flag
+    def perform(self, stop_thread):
+        self.stop_thread = stop_thread()
         if not self.is_running and not self.is_completed:
             self.log("---STARTING TASK---")
             self.t = Thread(target=self.run,
-                            args=(lambda: self._stop_flag,))
+                            args=(lambda: self.stop_thread,))
             self.t.daemon = True
             self.t.start()
             self.is_running = True
@@ -52,10 +31,9 @@ class Task():
                 del self.t
                 self.log("---COMPLETED TASK---")
                 self.is_running = False
-        if self.is_completed:
-            return True
+                return True
 
-    def run(self, _stop_flag):
+    def run(self, stop_thread):
         """This method is specific to the type of task"""
         # do something
         finished = True
@@ -63,7 +41,7 @@ class Task():
             self.is_completed = True
 
     def stop(self):
-        self._stop_flag = True
+        self.stop_thread = True
         if hasattr(self, "t"):
             self.t.join()
             del self.t
@@ -85,6 +63,6 @@ if __name__ == '__main__':
     import time
     task = Task()
     print(task.is_completed)
-    task.perform()
+    task.perform(False)
     time.sleep(1)
     print(task.is_completed)

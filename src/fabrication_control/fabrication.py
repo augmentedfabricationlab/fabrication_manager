@@ -6,15 +6,21 @@ __all__ = [
 
 
 class Fabrication():
-    def __init__(self):
+    def __init__(self, server=None):
+        # General
         self.tasks = {}
-        self._stop_thread = False
-        self.parallelize = False
-        self.max_parallel_tasks = 10
-        self.running_tasks = []
+        self._stop_thread = True
         self.current_task = None
         self.current_task_key = None
         self.log_messages = []
+
+        # Parallelization functionality
+        self.parallelize = False
+        self.max_parallel_tasks = 10
+        self.running_tasks = []
+
+        # Feedback functionality
+        self.server = server
 
     def add_task(self, task, key=None):
         if key is None:
@@ -57,6 +63,8 @@ class Fabrication():
 
     def close(self):
         self._join_threads()
+        if self.server is not None:
+            self.server.shutdown()
 
     def _join_threads(self):
         self._stop_thread = True
@@ -72,6 +80,9 @@ class Fabrication():
 
     def start(self):
         self._join_threads()
+        if self.server is not None:
+            self.server.clear()
+            self.server.start()
         if self.tasks_available():
             self._create_threads()
             self.fab_thread.start()
@@ -84,36 +95,50 @@ class Fabrication():
         for task in self.tasks.values():
             task.reset()
         self.current_task = None
+        self.log("FABRICATION: Done resetting all tasks")
 
     def run(self, stop_thread):
         self.current_task = None
+        self.log_messages = []
         self.log("FABRICATION: ---STARTING FABRICATION---")
+        get_next_task = False
         while self.tasks_available():
-            if (self.get_next_task() is not None
-                and (self.current_task is None
-                     or (self.current_task.is_completed
-                         and not self.current_task.is_running)
-                     or (not self.current_task.is_completed
-                         and self.parallelize
-                         and self.current_task.is_running
-                         and self.current_task.parallelizable
-                         and len(self.running_tasks) < self.max_parallel_tasks)
-                    )
-                ):
+            if stop_thread():
+                self.log("FABRICATION: ---FORCED STOP---")
+                break
+
+            if self.get_next_task() is not None:
+                if self.current_task is None:
+                    get_next_task = True
+                elif self.parallelize:
+                    if (self.current_task.is_running
+                            and self.current_task.parallelizable
+                            and len(self.running_tasks) < self.max_parallel_tasks):
+                        get_next_task = True
+                elif not self.parallelize:
+                    if (self.current_task.is_completed
+                            and not self.current_task.is_running):
+                        get_next_task = True
+            
+            if get_next_task:
+                print("Getting new task")
                 self.current_task = self.get_next_task()
-            elif (not self.current_task.is_completed
-                  and not self.current_task.is_running):
-                self.current_task.perform(stop_thread)
-                self.running_tasks.append(self.current_task)
-                self.log(self.current_task.log_messages)
-            elif len(self.running_tasks) > 0:
+                get_next_task = False         
+
+            if len(self.running_tasks) > 0:
                 for task in self.running_tasks:
                     task.perform(stop_thread)
                     self.log(task.log_messages)
                     if task.is_completed and not task.is_running:
                         self.running_tasks.remove(task)
-            if stop_thread():
-                break
+
+            if (not self.current_task.is_completed
+                  and not self.current_task.is_running
+                  and self.current_task not in self.running_tasks):
+                print("Initializing task")
+                self.current_task.perform(stop_thread)
+                self.running_tasks.append(self.current_task)
+                self.log(self.current_task.log_messages)
         else:
             self.log("FABRICATION: All tasks done")
             self.log("FABRICATION: ---STOPPING FABRICATION---")
@@ -127,6 +152,8 @@ class Fabrication():
         # if len(self.log_messages) > self.log_messages_length:
         #     self.log_messages = self.log_messages[-self.log_messages_length:]
 
+    def set_server(self, server):
+        self.server = server
 
 if __name__ == '__main__':
     from .task import Task

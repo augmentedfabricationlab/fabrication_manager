@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import time
 import sys
 import threading
+import socket
 if sys.version_info[0] == 2:
     import SocketServer as ss
 elif sys.version_info[0] == 3:
@@ -16,13 +17,19 @@ __all__ = [
 class FeedbackHandler(ss.StreamRequestHandler):
     def handle(self):
         print("Connected to client at {}".format(self.client_address[0]))
-        while True:
-            data = self.rfile.readline().strip().decode('utf8')
-            if not data:
-                break
-            self.server.rcv_msg.append(data)
-            msg = "Message from client: {}\n".format(data)
-            self.wfile.write(msg.encode())
+        connected = True
+        while connected:
+            try:
+                data = self.rfile.readline().strip().decode()
+                if not data:
+                    break
+                self.server.rcv_msg.append(data)
+                msg = "Message from client: {}\n".format(data)
+                self.wfile.write(msg.encode())
+            except socket.error:
+                connected = False 
+        print("Client disconnected")
+        self.request.close()               
 
 
 class TCPServer(ss.TCPServer):
@@ -60,8 +67,11 @@ class TCPFeedbackServer(object):
             self.server.shutdown()
             self.server_thread.join()
             del self.server_thread
+        if hasattr(self, "process_thread"):
+            self.process_thread.join()
+            del self.process_thread
 
-    def start(self, process=False):
+    def start(self, process=True):
         self.shutdown()
         self._stop_flag = False
         self._create_thread()
@@ -77,21 +87,6 @@ class TCPFeedbackServer(object):
             self.server.serve_forever()
         except:
             pass
-
-    def listen(self, stop, timeout=60, q=None):
-        tCurrent = time.time()
-        while True:
-            if stop():
-                break
-            if self.server.rcv_msg is []:
-                pass
-            elif len(self.msgs) != len(self.server.rcv_msg):
-                self.add_message(self.server.rcv_msg[len(self.msgs)])
-                if q is not None:
-                    q.put(self.msgs[len(self.msgs)])
-            if time.time() >= tCurrent + timeout:
-                print("Listening to server timed out")
-                break
 
     def process_messages(self, _stop_flag, timeout=None):
         tCurrent = time.time()
@@ -118,15 +113,15 @@ class TCPFeedbackServer(object):
 
 if __name__ == '__main__':
     import socket
-
-    address = ('localhost', 0)
+    address = ('localhost', 50003)
+    # address = ('192.168.56.103', 50003)
     # let the kernel give us a port
     server = TCPFeedbackServer(ip=address[0], port=address[1],
                                handler=FeedbackHandler)
     ip, port = server.server.server_address
     # find out what port we were given
 
-    server.start()
+    server.start(process=True)
     # Connect to the server
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((ip, port))
@@ -154,10 +149,16 @@ if __name__ == '__main__':
     response = s.recv(1024).decode('utf8')
     print('Received: "%s"' % response)
 
-    server.listen(exit_msg=[0.11, 0.11, 0.11, 0.11, 0.11, 0.11], timeout=2)
-
+    # try:
+    #     while True:
+    #         pass
+    # except KeyboardInterrupt:
+    #     pass
     # Clean up
     s.close()
     print("socket closed")
     server.shutdown()
+    if "Done" in server.msgs.values():
+        print("Found it!")
+    print(server.msgs)
     print("Server is shut down")
