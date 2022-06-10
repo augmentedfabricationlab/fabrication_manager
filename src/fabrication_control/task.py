@@ -17,21 +17,24 @@ class Task(object):
     def perform(self, stop_thread):
         self.stop_thread = stop_thread()
         if not self.is_running and not self.is_completed:
+            self.is_running = True
             self.log("---STARTING TASK---")
             self.t = Thread(target=self.run,
                             args=(lambda: self.stop_thread,))
             self.t.daemon = True
             self.t.start()
-            self.is_running = True
         else:
             if self.t.is_alive():
                 return False
             else:
                 self.t.join()
                 del self.t
-                self.log("---COMPLETED TASK---")
                 self.is_running = False
-                return True
+                if not self.stop_thread:
+                    self.log("---COMPLETED TASK---")
+                    return True
+                
+                
 
     def run(self, stop_thread):
         """This method is specific to the type of task"""
