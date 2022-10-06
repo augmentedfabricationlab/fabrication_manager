@@ -33,8 +33,6 @@ class Task(object):
                 if not self.stop_thread:
                     self.log("---COMPLETED TASK---")
                     return True
-                
-                
 
     def run(self, stop_thread):
         """This method is specific to the type of task"""

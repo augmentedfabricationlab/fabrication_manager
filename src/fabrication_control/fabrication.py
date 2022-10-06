@@ -1,11 +1,11 @@
 from threading import Thread
 
 __all__ = [
-    "Fabrication"
+    "FabricationManager"
 ]
 
 
-class Fabrication(object):
+class FabricationManager(object):
     def __init__(self, server=None):
         # General
         self.tasks = {}
