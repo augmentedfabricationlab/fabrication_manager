@@ -1,7 +1,7 @@
 import time
-from fabrication_control import Fabrication
-from fabrication_control import TCPFeedbackServer
-import fabrication_control
+from fabrication_manager import FabricationManager
+from fabrication_manager import TCPFeedbackServer
+import fabrication_manager
 from ur_fabrication_control.direct_control import URTask, urscript
 from ur_fabrication_control.direct_control import URScript
 
@@ -32,7 +32,7 @@ for i in range(5):
 
 stop_thread = False
 
-fabrication = Fabrication(server)
+fabrication = FabricationManager(server)
 fabrication.set_tasks(tasks)
 fabrication._stop_thread = stop_thread
 fabrication.server.start()

@@ -1,6 +1,6 @@
 import time
-from fabrication_control import Fabrication
-from fabrication_control import TCPFeedbackServer
+from fabrication_manager import FabricationManager
+from fabrication_manager import TCPFeedbackServer
 from ur_fabrication_control.direct_control import URTask, urscript
 from ur_fabrication_control.direct_control import URScript
 

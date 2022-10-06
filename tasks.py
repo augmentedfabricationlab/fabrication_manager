@@ -122,11 +122,11 @@ def clean(ctx, docs=True, bytecode=True, builds=True):
         folders.append('dist/')
 
     if bytecode:
-        folders.append('src/fabrication_control/__pycache__')
+        folders.append('src/fabrication_manager/__pycache__')
 
     if builds:
         folders.append('build/')
-        folders.append('src/fabrication_control.egg-info/')
+        folders.append('src/fabrication_manager.egg-info/')
 
     for folder in folders:
         rmtree(os.path.join(BASE_FOLDER, folder), ignore_errors=True)

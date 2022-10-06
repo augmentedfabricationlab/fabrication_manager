@@ -1,6 +1,6 @@
-__title__ = 'fabrication_control'
+__title__ = 'fabrication_manager'
 __description__ = 'A short description of the project'
-__url__ = 'https://github.com/augmentedfabricationlab/fabrication_control'
+__url__ = 'https://github.com/augmentedfabricationlab/fabrication_manager'
 __version__ = '0.1.0'
 __author__ = 'Augmented Fabrication Lab'
 __author_email__ = 'doerfler@tum.de'
