@@ -23,6 +23,8 @@ class FabricationManager(object):
         self.server = server
 
     def add_task(self, task, key=None):
+        # Type of task is of type "Task" or inherited from (only defined in the task itself)
+        # FIX: If key was not defined but already exists it will overwrite
         if key is None:
             key = len(self.tasks)
         task.key = key
@@ -156,10 +158,10 @@ class FabricationManager(object):
         self.server = server
 
 if __name__ == '__main__':
-    from .task import Task
+    from fabrication_manager.task import Task
     import time
 
-    fab = Fabrication()
+    fab = FabricationManager()
 
     tasks = [
         Task(),
