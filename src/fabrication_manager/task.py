@@ -14,6 +14,9 @@ class Task(object):
         self.stop_thread = False
         self.log_messages = []
 
+    def __repr__(self):
+        return 'Task(key = {self.key}, is_completed={self.is_completed}'
+        
     def perform(self, stop_thread):
         self.stop_thread = stop_thread()
         if not self.is_running and not self.is_completed:
@@ -35,7 +38,8 @@ class Task(object):
                     return True
 
     def run(self, stop_thread):
-        """This method is specific to the type of task"""
+        """This method is specific to the type of task
+        Fill your code here for the type of action you want performed"""
         # do something
         finished = True
         if finished:
