@@ -38,16 +38,25 @@ class TCPServer(ss.TCPServer):
 
 class TCPFeedbackServer(object):
     def __init__(self, ip="192.168.10.11", port=50002,
-                 handler=FeedbackHandler):
+                 name="FeedbackServer", handler=FeedbackHandler):
         self.ip = ip
         self.port = port
         self.handler = handler
-
+        self.name = name
         self.server = TCPServer((self.ip, self.port), self.handler)
         self.server.rcv_msg = []
         self.msgs = {}
         self._stop_flag = True
+        
+    def __enter__(cls):
+        cls.start()
+        print("Enter context: Server started...")
+        return cls
 
+    def __exit__(cls, typ, val, tb):
+        cls.shutdown()
+        print("Exit context: Server is shut down")
+        
     def clear(self):
         self.server.rcv_msg = []
         self.msgs = {}

@@ -104,51 +104,57 @@ class FabricationManager(object):
         self.current_task = None
         self.log_messages = []
         self.log("FABRICATION: ---STARTING FABRICATION---")
-        get_next_task = False
-        with TCPFeedbackServer(*self.server_address) if self.server_address[0] is not None else nullcontext() as server:
-            if isinstance(server, TCPFeedbackServer):
-                server.start()
-            while self.tasks_available():
-                if stop_thread():
-                    self.log("FABRICATION: ---FORCED STOP---")
-                    break
-                if self.get_next_task() is not None:
-                    if self.current_task is None:
+        if self.server_address[0] is not None:
+            self.log(self.server_address)
+            with TCPFeedbackServer(*self.server_address) as server:
+                return self.loop(stop_thread, server)
+        else:
+            return self.loop(stop_thread)
+
+    def loop(self, stop_thread, server=None):            
+        get_next_task = False    
+        while self.tasks_available():
+            if stop_thread():
+                self.log("FABRICATION: ---FORCED STOP---")
+                break
+            
+            if self.get_next_task() is not None:
+                if self.current_task is None:
+                    get_next_task = True
+                elif self.parallelize:
+                    if (self.current_task.is_running
+                            and self.current_task.parallelizable
+                            and len(self.running_tasks) < self.max_parallel_tasks):
                         get_next_task = True
-                    elif self.parallelize:
-                        if (self.current_task.is_running
-                                and self.current_task.parallelizable
-                                and len(self.running_tasks) < self.max_parallel_tasks):
-                            get_next_task = True
-                    elif not self.parallelize:
-                        if (self.current_task.is_completed
-                                and not self.current_task.is_running):
-                            get_next_task = True
-                
-                if get_next_task:
-                    print("Getting new task")
-                    self.current_task = self.get_next_task()
-                    get_next_task = False 
-                    if hasattr(self.current_task, "server"):
-                        self.current_task.server = server        
+                elif not self.parallelize:
+                    if (self.current_task.is_completed
+                            and not self.current_task.is_running):
+                        get_next_task = True
+            
+            if get_next_task:
+                print("Getting new task")
+                self.current_task = self.get_next_task()
+                get_next_task = False 
+                if hasattr(self.current_task, "server"):
+                    self.current_task.server = server        
 
-                if len(self.running_tasks) > 0:
-                    for task in self.running_tasks:
-                        task.perform(stop_thread)
-                        self.log(task.log_messages)
-                        if task.is_completed and not task.is_running:
-                            self.running_tasks.remove(task)
+            if len(self.running_tasks) > 0:
+                for task in self.running_tasks:
+                    task.perform(stop_thread)
+                    self.log(task.log_messages)
+                    if task.is_completed and not task.is_running:
+                        self.running_tasks.remove(task)
 
-                if (not self.current_task.is_completed
-                    and not self.current_task.is_running
-                    and self.current_task not in self.running_tasks):
-                    print("Initializing task")
-                    self.current_task.perform(stop_thread)
-                    self.running_tasks.append(self.current_task)
-                    self.log(self.current_task.log_messages)
-            else:
-                self.log("FABRICATION: All tasks done")
-                self.log("FABRICATION: ---STOPPING FABRICATION---")
+            if (not self.current_task.is_completed
+                and not self.current_task.is_running
+                and self.current_task not in self.running_tasks):
+                print("Initializing task")
+                self.current_task.perform(stop_thread)
+                self.running_tasks.append(self.current_task)
+                self.log(self.current_task.log_messages)
+        else:
+            self.log("FABRICATION: All tasks done")
+            self.log("FABRICATION: ---STOPPING FABRICATION---")
         return True
 
     def log(self, msg):
@@ -168,7 +174,7 @@ if __name__ == '__main__':
     from fabrication_manager.task import Task
     import time
 
-    fab = FabricationManager()
+    fab = FabricationManager(server_address=("192.168.0.250", 50006))
 
     tasks = [
         Task(),
