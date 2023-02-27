@@ -107,9 +107,9 @@ class FabricationManager(object):
         self.log("FABRICATION: ---STARTING FABRICATION---")
         if self.server_address[0] is not None:
             with TCPFeedbackServer(*self.server_address) as server:
-                return self.loop(stop_thread, server=server)
+                self.loop(stop_thread, server)
         else:
-            return self.loop(stop_thread)
+            self.loop(stop_thread)
 
     def loop(self, stop_thread, server=None):            
         get_next_task = False    

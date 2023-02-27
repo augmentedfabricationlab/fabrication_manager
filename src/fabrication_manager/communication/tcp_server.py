@@ -62,7 +62,7 @@ class TCPFeedbackServer(object):
         self.msgs = {}
 
     def _create_thread(self):
-        self.server_thread = threading.Thread(target=self.run)
+        self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True
 
     def _create_process_thread(self):
