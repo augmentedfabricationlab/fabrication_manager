@@ -35,7 +35,7 @@ class FabricationManager(object):
 
     def set_tasks(self, tasks):
         for task in tasks:
-            self.add_task(task)
+            self.add_task(task, key=task.key)
 
     def tasks_available(self):
         if len(self.tasks):
@@ -107,9 +107,9 @@ class FabricationManager(object):
         if self.server_address[0] is not None:
             self.log(self.server_address)
             with TCPFeedbackServer(*self.server_address) as server:
-                return self.loop(stop_thread, server)
+                self.loop(stop_thread, server)
         else:
-            return self.loop(stop_thread)
+            self.loop(stop_thread)
 
     def loop(self, stop_thread, server=None):            
         get_next_task = False    
