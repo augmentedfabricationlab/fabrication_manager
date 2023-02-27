@@ -99,9 +99,7 @@ class TCPFeedbackServer(object):
 
     def process_messages(self, _stop_flag, timeout=None):
         tCurrent = time.time()
-        while True:
-            if _stop_flag():
-                break
+        while not _stop_flag():
             if self.server.rcv_msg is []:
                 pass
             elif len(self.msgs) != len(self.server.rcv_msg):

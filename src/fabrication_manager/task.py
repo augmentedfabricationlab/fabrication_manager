@@ -1,4 +1,6 @@
 from threading import Thread
+from weakref import ref
+
 
 __all__ = [
     "Task"
@@ -6,8 +8,13 @@ __all__ = [
 
 
 class Task(object):
-    def __init__(self, key=None):
+    def __init__(self, key=None, parent=None):
         self.key = key
+        if parent is not None:
+            self.parent = ref(parent)
+        else:
+            self.parent = parent
+
         self.parallelizable = False
         self.is_completed = False
         self.is_running = False

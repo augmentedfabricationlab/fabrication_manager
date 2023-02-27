@@ -8,13 +8,14 @@ __all__ = [
 
 
 class FabricationManager(object):
-    def __init__(self, server_address=(None, None)):
+    def __init__(self, server_address=(None, None), fim=None):
         # General
         self.tasks = {}
         self._stop_thread = True
         self.current_task = None
         self.current_task_key = None
         self.log_messages = []
+        self.fabrication_information_model = fim
 
         # Parallelization functionality
         self.parallelize = False
@@ -35,7 +36,7 @@ class FabricationManager(object):
 
     def set_tasks(self, tasks):
         for task in tasks:
-            self.add_task(task)
+            self.add_task(task, key=task.key)
 
     def tasks_available(self):
         if len(self.tasks):
@@ -105,9 +106,8 @@ class FabricationManager(object):
         self.log_messages = []
         self.log("FABRICATION: ---STARTING FABRICATION---")
         if self.server_address[0] is not None:
-            self.log(self.server_address)
             with TCPFeedbackServer(*self.server_address) as server:
-                return self.loop(stop_thread, server)
+                return self.loop(stop_thread, server=server)
         else:
             return self.loop(stop_thread)
 
@@ -117,7 +117,6 @@ class FabricationManager(object):
             if stop_thread():
                 self.log("FABRICATION: ---FORCED STOP---")
                 break
-            
             if self.get_next_task() is not None:
                 if self.current_task is None:
                     get_next_task = True
@@ -175,12 +174,14 @@ if __name__ == '__main__':
     import time
 
     fab = FabricationManager(server_address=("192.168.0.250", 50006))
+    fab = FabricationManager(server_address=("127.0.0.1", 50004))
 
     tasks = [
         Task(),
         Task(),
         Task(),
     ]
+    tasks[0].server = None
 
     [fab.add_task(task) for task in tasks]
     print(fab.tasks)
