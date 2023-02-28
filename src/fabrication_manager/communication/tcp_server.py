@@ -1,8 +1,6 @@
-from __future__ import absolute_import
 import time
 import sys
 import threading
-import socket
 if sys.version_info[0] == 2:
     import SocketServer as ss
 elif sys.version_info[0] == 3:
@@ -14,6 +12,7 @@ __all__ = [
     'TCPFeedbackServer'
 ]
 
+
 class FeedbackHandler(ss.StreamRequestHandler):
     def handle(self):
         print("Connected to client at {}".format(self.client_address[0]))
@@ -23,91 +22,49 @@ class FeedbackHandler(ss.StreamRequestHandler):
                 data = self.rfile.readline().strip().decode()
                 if not data:
                     break
-                self.server.rcv_msg.append(data)
+                self.server.add_message(data)
                 msg = "Message from client: {}\n".format(data)
                 self.wfile.write(msg.encode())
             except socket.error:
                 connected = False 
         print("Client disconnected")
-        self.request.close()               
+        self.request.close()
 
 
-class TCPServer(ss.TCPServer):
+class TCPFeedbackServer(ss.TCPServer):
     allow_reuse_address = True
+    allow_reuse_port = True
 
-
-class TCPFeedbackServer(object):
     def __init__(self, ip="192.168.10.11", port=50002,
-                 name="FeedbackServer", handler=FeedbackHandler):
-        self.ip = ip
-        self.port = port
-        self.handler = handler
-        self.name = name
-        self.server = TCPServer((self.ip, self.port), self.handler)
-        self.server.rcv_msg = []
+                 handler=FeedbackHandler):
+        if issubclass(TCPFeedbackServer, object):
+            super(TCPFeedbackServer, self).__init__((ip,port), handler)
+        else:
+            ss.TCPServer.__init__(self, (ip, port), handler)
+        self.name = "Feedbackserver"
         self.msgs = {}
-        self._stop_flag = True
-        
+
     def __enter__(cls):
         cls.start()
         print("Enter context: Server started...")
         return cls
 
     def __exit__(cls, typ, val, tb):
-        cls.shutdown()
+        cls.stop()
         print("Exit context: Server is shut down")
-        
+
     def clear(self):
-        self.server.rcv_msg = []
         self.msgs = {}
 
-    def _create_thread(self):
-        self.server_thread = threading.Thread(target=self.server.serve_forever)
-        self.server_thread.daemon = True
-
-    def _create_process_thread(self):
-        self.process_thread = threading.Thread(target=self.process_messages,
-                                               args=(lambda: self._stop_flag,))
-        self.process_thread.daemon = True
-
-    def shutdown(self):
-        self._stop_flag = True
-        if hasattr(self, "server_thread"):
-            self.server.shutdown()
-            self.server_thread.join()
-            del self.server_thread
-        if hasattr(self, "process_thread"):
-            self.process_thread.join()
-            del self.process_thread
-
-    def start(self, process=True):
+    def stop(self):
         self.shutdown()
-        self._stop_flag = False
-        self._create_thread()
-        self.server_thread.start()
+        self.server_close()
+        self.t.join()
+
+    def start(self):
+        self.t = threading.Thread(target=self.serve_forever)
+        self.t.start()
         print("Server started in thread...")
-        if process:
-            self._create_process_thread()
-            self.process_thread.start()
-            print("Processing messages...")
-
-    def run(self):
-        try:
-            self.server.serve_forever()
-        except:
-            pass
-
-    def process_messages(self, _stop_flag, timeout=None):
-        tCurrent = time.time()
-        while not _stop_flag():
-            if self.server.rcv_msg is []:
-                pass
-            elif len(self.msgs) != len(self.server.rcv_msg):
-                self.add_message(self.server.rcv_msg[len(self.msgs)])
-            if timeout is not None:
-                if time.time() >= tCurrent + timeout:
-                    print("Listening to server timed out")
-                    break
 
     def add_message(self, msg):
         print("Adding message: {}".format(msg))
@@ -118,54 +75,84 @@ class TCPFeedbackServer(object):
         self.msgs[len(self.msgs)] = msg
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' and sys.version_info[0] == 2:
     import socket
-    address = ('localhost', 50003)
-    # address = ('192.168.56.103', 50003)
+
+    class socket2(socket.socket):
+        def __enter__(cls):
+            return cls
+        
+        def __exit__(cls, typ, val, tb):
+            cls.close()
+        
+
+    address = ('localhost', 10)
     # let the kernel give us a port
-    server = TCPFeedbackServer(ip=address[0], port=address[1],
-                               handler=FeedbackHandler)
-    ip, port = server.server.server_address
-    # find out what port we were given
+    with TCPFeedbackServer(ip=address[0], port=address[1], handler=FeedbackHandler) as server:
+        ip, port = server.server_address
+        # find out what port we were given
+        # Connect to the server
+        with socket2(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((ip, port))
 
-    server.start(process=True)
-    # Connect to the server
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((ip, port))
+            # Send the data
+            message = 'Hello, world\n'
+            print('Sending : "%s"' % message)
+            len_sent = s.send(message.encode())
 
-    # Send the data
-    message = 'Hello, world\n'
-    print('Sending : "%s"' % message)
-    len_sent = s.send(message.encode())
+            response = s.recv(1024).decode('utf8')
+            print('Received: "%s"' % response)
 
-    response = s.recv(1024).decode('utf8')
-    print('Received: "%s"' % response)
+            message = '[0.11,0.11,0.11,0.11,0.11,0.11]\n'
+            print('Sending : "%s"' % message)
+            len_sent = s.send(message.encode())
 
-    message = '[0.11,0.11,0.11,0.11,0.11,0.11]\n'
-    print('Sending : "%s"' % message)
-    len_sent = s.send(message.encode())
+            response = s.recv(1024).decode('utf8')
+            print('Received: "%s"' % response)
 
-    response = s.recv(1024).decode('utf8')
-    print('Received: "%s"' % response)
+            message = 'Done\n'
+            print('Sending : "%s"' % message)
+            len_sent = s.send(message.encode())
 
-    message = 'Done\n'
-    print('Sending : "%s"' % message)
-    len_sent = s.send(message.encode())
+            # Receive a response
+            response = s.recv(1024).decode('utf8')
+            print('Received: "%s"' % response)
 
-    # Receive a response
-    response = s.recv(1024).decode('utf8')
-    print('Received: "%s"' % response)
-
-    # try:
-    #     while True:
-    #         pass
-    # except KeyboardInterrupt:
-    #     pass
-    # Clean up
-    s.close()
-    print("socket closed")
-    server.shutdown()
-    if "Done" in server.msgs.values():
-        print("Found it!")
     print(server.msgs)
-    print("Server is shut down")
+
+elif __name__ == "__main__" and sys.version_info[0] == 3:
+    import socket
+
+    address = ('localhost', 10)
+    # let the kernel give us a port
+    with TCPFeedbackServer(ip=address[0], port=address[1], handler=FeedbackHandler) as server:
+        ip, port = server.server_address
+        # find out what port we were given
+        # Connect to the server
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((ip, port))
+
+            # Send the data
+            message = 'Hello, world\n'
+            print('Sending : "%s"' % message)
+            len_sent = s.send(message.encode())
+
+            response = s.recv(1024).decode('utf8')
+            print('Received: "%s"' % response)
+
+            message = '[0.11,0.11,0.11,0.11,0.11,0.11]\n'
+            print('Sending : "%s"' % message)
+            len_sent = s.send(message.encode())
+
+            response = s.recv(1024).decode('utf8')
+            print('Received: "%s"' % response)
+
+            message = 'Done\n'
+            print('Sending : "%s"' % message)
+            len_sent = s.send(message.encode())
+
+            # Receive a response
+            response = s.recv(1024).decode('utf8')
+            print('Received: "%s"' % response)
+
+    print(server.msgs)
