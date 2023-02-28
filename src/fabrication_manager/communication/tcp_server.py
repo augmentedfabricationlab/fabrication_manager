@@ -37,8 +37,10 @@ class TCPFeedbackServer(ss.TCPServer):
 
     def __init__(self, ip="192.168.10.11", port=50002,
                  handler=FeedbackHandler):
-        super(TCPFeedbackServer, self).__init__((ip,port), handler)
-    
+        if issubclass(TCPFeedbackServer, object):
+            super(TCPFeedbackServer, self).__init__((ip,port), handler)
+        else:
+            ss.TCPServer.__init__(self, (ip, port), handler)
         self.name = "Feedbackserver"
         self.msgs = {}
 
@@ -73,7 +75,52 @@ class TCPFeedbackServer(ss.TCPServer):
         self.msgs[len(self.msgs)] = msg
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' and sys.version_info[0] == 2:
+    import socket
+
+    class socket2(socket.socket):
+        def __enter__(cls):
+            return cls
+        
+        def __exit__(cls, typ, val, tb):
+            cls.close()
+        
+
+    address = ('localhost', 10)
+    # let the kernel give us a port
+    with TCPFeedbackServer(ip=address[0], port=address[1], handler=FeedbackHandler) as server:
+        ip, port = server.server_address
+        # find out what port we were given
+        # Connect to the server
+        with socket2(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((ip, port))
+
+            # Send the data
+            message = 'Hello, world\n'
+            print('Sending : "%s"' % message)
+            len_sent = s.send(message.encode())
+
+            response = s.recv(1024).decode('utf8')
+            print('Received: "%s"' % response)
+
+            message = '[0.11,0.11,0.11,0.11,0.11,0.11]\n'
+            print('Sending : "%s"' % message)
+            len_sent = s.send(message.encode())
+
+            response = s.recv(1024).decode('utf8')
+            print('Received: "%s"' % response)
+
+            message = 'Done\n'
+            print('Sending : "%s"' % message)
+            len_sent = s.send(message.encode())
+
+            # Receive a response
+            response = s.recv(1024).decode('utf8')
+            print('Received: "%s"' % response)
+
+    print(server.msgs)
+
+elif __name__ == "__main__" and sys.version_info[0] == 3:
     import socket
 
     address = ('localhost', 10)
