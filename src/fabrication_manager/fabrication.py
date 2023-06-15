@@ -59,6 +59,15 @@ class FabricationManager(object):
         else:
             # No next task available
             return None
+        
+    def get_next_task_key(self):
+        keys = [key for key in self.tasks.keys()]
+        keys.sort()
+        next_key = keys[-1] + 1
+        return next_key
+    
+    def get_task_by_key(self, key):
+        return self.tasks.get(key)
 
     def clear_tasks(self):
         self.tasks = {}
