@@ -8,14 +8,13 @@ __all__ = [
 
 
 class FabricationManager(object):
-    def __init__(self, server_address=(None, None), assembly=None):
+    def __init__(self, server_address=(None, None)):
         # General
         self.tasks = {}
         self._stop_thread = True
         self.current_task = None
         self.current_task_key = None
         self.log_messages = []
-        self.assembly = assembly
 
         # Parallelization functionality
         self.parallelize = False
