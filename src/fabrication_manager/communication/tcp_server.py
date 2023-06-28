@@ -5,7 +5,6 @@ if sys.version_info[0] == 2:
     import SocketServer as ss
 elif sys.version_info[0] == 3:
     import socketserver as ss
-ss.TCPServer.allow_reuse_address = True
 
 __all__ = [
     'FeedbackHandler',
@@ -37,7 +36,8 @@ class TCPFeedbackServer(ss.TCPServer):
 
     def __init__(self, ip="192.168.10.11", port=50002,
                  handler=FeedbackHandler):
-        if issubclass(TCPFeedbackServer, object):
+        # if issubclass(TCPFeedbackServer, object):
+        if not isinstance(ss.TCPServer, object):
             super(TCPFeedbackServer, self).__init__((ip,port), handler)
         else:
             ss.TCPServer.__init__(self, (ip, port), handler)
