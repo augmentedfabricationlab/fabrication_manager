@@ -6,7 +6,6 @@ __all__ = [
     "FabricationManager"
 ]
 
-
 class FabricationManager(object):
     def __init__(self, server_address=(None, None)):
         # General
@@ -90,6 +89,25 @@ class FabricationManager(object):
         self.fab_thread = Thread(target=self.run,
                                  args=(lambda: self._stop_thread,))
         self.fab_thread.daemon = True
+
+    def perform_task_by_key(self, key):
+        task = self.get_task_by_key(key)
+        task.perform(lambda: False)
+        self.log(task.log_messages)
+    
+    def stop_task_by_key(self, key):
+        task = self.get_task_by_key(key)
+        task.perform(lambda: True)
+        self.log(task.log_messages)
+
+    def check_task_by_key(self, key):
+        task = self.get_task_by_key(key)
+        state_dict = {"is_completed":task.is_completed,
+         "is_running":task.is_running}
+        if task.is_completed:
+            task.perform(lambda:False)
+            self.log(task.log_messages)
+        return state_dict
 
     def start(self):
         self._join_threads()

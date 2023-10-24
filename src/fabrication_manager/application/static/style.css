@@ -1,0 +1,71 @@
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} 
+
+body {
+    font-family: "helvetica", sans-serif;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border: 1px solid;
+}
+
+th{
+    height: 30px;
+    text-align: center;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-bottom: 1px solid;
+}
+
+td {
+    width: 100%;
+    text-align: center;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-bottom: 1px solid grey;
+}
+
+.message-box {
+    border-color: black;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 10px;
+    background-color: whitesmoke;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    align-items: stretch;
+    padding: 5px;
+}
+
+.messages {
+    overflow-y: scroll;
+    flex: 1;
+    width: 100%;
+}
+
+#message {
+    flex: 1;
+}
+
+.text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.muted {
+    font-size: 10px;
+    color: darkgray;
+}

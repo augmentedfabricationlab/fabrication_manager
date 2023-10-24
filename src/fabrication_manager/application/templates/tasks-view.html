@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1 align="center">Tasks</h1>
+    <table class="table-group table-group-flush" id="tasks-table">
+        <thead>
+            <th>ID</th>
+            <th>PARENT ID</th>
+            <th>STATE</th>
+            <th>TYPE</th>
+            <th>REMOVE</th>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task.id }}</td>
+                    <td>{{ task.parent_id }}</td>
+                    <td>{{ task.state }}</td>
+                    <td>{{ task.name }}</td>
+                    <td><button type="button" class="close" onclick="deleteTask({{ task.id }})">
+                        <span aria-hidden="true">&times;</span></button></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

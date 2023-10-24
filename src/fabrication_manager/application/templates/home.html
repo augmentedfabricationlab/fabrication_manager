@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<form class="home" method="POST">
+    <h3>Fabrication Manager Web Interface</h3>
+    <div class="form-group">
+        <label for="start-label">Fabrication Start: </label>
+        <button type="submit" class="btn btn-primary" id="start" name="start" value="true">Start</button>
+    </div>
+    <div class="form-group">
+        <label for="stop-label">Fabrication Stop: </label>
+        <button type="submit" class="btn btn-primary" id="stop" name="stop" value="true">Stop</button>
+    </div>
+    <div class="form-group">
+        <label for="reset-label">Fabrication Reset: </label>
+        <button type="submit" class="btn btn-primary" id="reset" name="reset" value="true">Reset</button>
+    </div>
+    <div class="form-group">
+        <label for="clear-label">Clear all: </label>
+        <button type="submit" class="btn btn-primary" id="clear" name="clear" value="true">Clear</button>
+    </div>
+</form>
+{% endblock %}

@@ -46,11 +46,13 @@ class TCPFeedbackServer(ss.TCPServer):
 
     def __enter__(cls):
         cls.start()
+        cls.clear()
         print("Enter context: Server started...")
         return cls
 
     def __exit__(cls, typ, val, tb):
         cls.stop()
+        cls.clear()
         print("Exit context: Server is shut down")
 
     def clear(self):

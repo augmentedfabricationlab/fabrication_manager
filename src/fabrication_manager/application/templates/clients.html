@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form>
+    <h1 align="center">Clients</h1>
+    <table style="width: 100%">
+        <thead>
+        <th>Client</th>
+        <th>IP</th>
+        <th>Status</th>
+        </thead>
+        <tbody>
+        {% for row in data %}
+        <tr>
+            <td>{{ row.client }}</td>
+            <td>{{ row.ip }}</td>
+            <td>{{ row.status }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        $(document).ready(function(){
+            var namespace = '/';    
+            var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+            // Update the counter when a new user connects
+            socket.on('users', function(users) {
+                userCount = document.getElementById('user_counter');
+                userCount.innerHTML = users.user_count;
+            });
+    });
+    </script>
+    <div>
+        <label>User count:</label>
+        <h4 id='user_counter'></h4>
+    </div>
+</form>
+{% endblock %}
