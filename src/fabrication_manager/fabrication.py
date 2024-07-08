@@ -1,4 +1,5 @@
 from threading import Thread
+from compas.datastructures import Graph
 from fabrication_manager.utilities import nullcontext
 from fabrication_manager.communication import TCPFeedbackServer
 

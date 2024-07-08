@@ -16,7 +16,7 @@ class Task(object):
 
     def __repr__(self):
        # return 'Task(key = {self.key}, is_completed={self.is_completed}'
-       return "Task_{}_complete".format(self.key)
+       return type(self).__name__
         
     def perform(self, stop_thread):
         self.stop_thread = stop_thread()
