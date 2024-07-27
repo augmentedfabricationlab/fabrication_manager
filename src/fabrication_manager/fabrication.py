@@ -1,6 +1,6 @@
 from threading import Thread
-from compas.datastructures import Graph
-from fabrication_manager.utilities import nullcontext
+# from compas.datastructures import Graph
+# from fabrication_manager.utilities import nullcontext
 from fabrication_manager.communication import TCPFeedbackServer
 
 __all__ = [
@@ -184,7 +184,7 @@ if __name__ == '__main__':
     from fabrication_manager.task import Task
     import time
 
-    fab = FabricationManager(server_address=("192.168.0.250", 50006))
+    fab = FabricationManager(server_address=("192.168.0.42", 50006))
 
     tasks = [
         Task(),

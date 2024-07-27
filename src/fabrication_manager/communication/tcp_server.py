@@ -41,6 +41,8 @@ class TCPFeedbackServer(ss.TCPServer):
             super(TCPFeedbackServer, self).__init__((ip,port), handler)
         else:
             ss.TCPServer.__init__(self, (ip, port), handler)
+        self.ip = ip
+        self.port = port
         self.name = "Feedbackserver"
         self.msgs = {}
 
