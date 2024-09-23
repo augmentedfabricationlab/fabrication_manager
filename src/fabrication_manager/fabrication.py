@@ -126,6 +126,15 @@ class FabricationManager(object):
         while self.tasks_available():
             if stop_thread():
                 self.log("FABRICATION: ---FORCED STOP---")
+
+                # Stop all tasks at fabrication stop.
+                while len(self.running_tasks) > 0:
+                    running_task = self.running_tasks[0]
+                    running_task.perform(stop_thread)
+                    if not hasattr(running_task, "t"):
+                        self.running_tasks.remove(running_task)
+                        self.log("Task {} is joint.".format(running_task))
+                        break
                 break
             
             if self.get_next_task() is not None:
