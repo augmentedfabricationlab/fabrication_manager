@@ -2,6 +2,8 @@ from threading import Thread
 # from compas.datastructures import Graph
 # from fabrication_manager.utilities import nullcontext
 from fabrication_manager.communication import TCPFeedbackServer
+import json
+import time
 
 __all__ = [
     "FabricationManager"
@@ -18,9 +20,11 @@ class FabricationManager(object):
         self.log_messages = []
 
         # Parallelization functionality
+        self.fabrication_name = None
         self.parallelize = False
         self.max_parallel_tasks = 10
         self.running_tasks = []
+        self.export = True
 
         # Feedback functionality
         # Example address = ("192.168.0.250", 50005)
@@ -74,8 +78,21 @@ class FabricationManager(object):
         self.tasks = {}
 
     def stop(self):
+        if self.export:
+            self.export_log()
         self.close()
         self.log("FABRICATION: Stopped and joined all threads")
+
+    def export_log(self):
+        if self.fabrication_name is None:
+            filename = time.strftime("%y%m%d_%H%M") + "_log.json"
+        else:
+            filename = time.strftime("%y%m%d_%H%M") + "_" + str(self.fabrication_name) + ".json"
+        filepath = "C:\\Users\\begs\\workspace\\spaicr\\data\\2nd_experiment\\fabrication_logs\\{}".format(filename)
+        json_data = json.dumps(self.log_messages)
+
+        with open(filepath, "w") as f:
+            f.write(json_data)
 
     def close(self):
         self._join_threads()
@@ -174,6 +191,8 @@ class FabricationManager(object):
         else:
             self.log("FABRICATION: All tasks done")
             self.log("FABRICATION: ---STOPPING FABRICATION---")
+            if self.export:
+                self.export_log()
         return True
 
     def log(self, msg):
@@ -190,6 +209,7 @@ class FabricationManager(object):
 
 
 if __name__ == '__main__':
+
     from fabrication_manager.task import Task
     import time
 

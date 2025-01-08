@@ -1,4 +1,5 @@
 from threading import Thread
+import time
 
 __all__ = [
     "Task"
@@ -13,6 +14,7 @@ class Task(object):
         self.is_running = False
         self.stop_thread = False
         self.log_messages = []
+        self.start_time = 0
 
     def __repr__(self):
        # return 'Task(key = {self.key}, is_completed={self.is_completed}'
@@ -23,6 +25,7 @@ class Task(object):
         if not self.is_running and not self.is_completed:
             self.is_running = True
             self.log("---STARTING TASK---")
+            self.start_time = time.time()
             self.t = Thread(target=self.run,
                             args=(lambda: self.stop_thread,))
             self.t.daemon = True
@@ -33,6 +36,11 @@ class Task(object):
             else:
                 self.t.join()
                 del self.t
+
+                end_time = time.time()
+                task_duration = end_time - self.start_time
+                self.log("Task duration: {} s".format(task_duration))
+                
                 self.is_running = False
                 if not self.stop_thread:
                     self.log("---COMPLETED TASK---")
