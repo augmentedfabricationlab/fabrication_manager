@@ -25,6 +25,7 @@ class FabricationManager(object):
         self.max_parallel_tasks = 10
         self.running_tasks = []
         self.export = True
+        self.path = "C:\\Users"
 
         # Feedback functionality
         # Example address = ("192.168.0.250", 50005)
@@ -88,7 +89,7 @@ class FabricationManager(object):
             filename = time.strftime("%y%m%d_%H%M") + "_log.json"
         else:
             filename = time.strftime("%y%m%d_%H%M") + "_" + str(self.fabrication_name) + ".json"
-        filepath = "C:\\Users\\begs\\workspace\\spaicr\\data\\2nd_experiment\\fabrication_logs\\{}".format(filename)
+        filepath = "{}\\{}".format(self.path, filename)
         json_data = json.dumps(self.log_messages)
 
         with open(filepath, "w") as f:
