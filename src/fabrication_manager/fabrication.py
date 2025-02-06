@@ -24,7 +24,7 @@ class FabricationManager(object):
         self.parallelize = False
         self.max_parallel_tasks = 10
         self.running_tasks = []
-        self.export = True
+        self.export = False
         self.path = "C:\\Users"
 
         # Feedback functionality
