@@ -83,7 +83,7 @@ class FabricationManager(object):
     def _join_threads(self):
         self._stop_thread = True
         if hasattr(self, "fab_thread"):
-            self.fab_thread.join()
+            self.fab_thread.join(timeout=1)
             del self.fab_thread
 
     def _create_threads(self):

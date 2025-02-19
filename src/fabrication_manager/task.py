@@ -31,7 +31,7 @@ class Task(object):
             if self.t.is_alive():
                 return False
             else:
-                self.t.join()
+                self.t.join(timeout=1)
                 del self.t
                 self.is_running = False
                 if not self.stop_thread:
@@ -49,7 +49,7 @@ class Task(object):
     def stop(self):
         self.stop_thread = True
         if hasattr(self, "t"):
-            self.t.join()
+            self.t.join(timeout=1)
             del self.t
 
     def reset(self):

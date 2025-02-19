@@ -61,7 +61,7 @@ class TCPFeedbackServer(ss.TCPServer):
     def stop(self):
         self.shutdown()
         self.server_close()
-        self.t.join()
+        self.t.join(timeout=1)
 
     def start(self):
         self.t = threading.Thread(target=self.serve_forever)
@@ -125,7 +125,7 @@ if __name__ == '__main__' and sys.version_info[0] == 2:
 elif __name__ == "__main__" and sys.version_info[0] == 3:
     import socket
 
-    address = ('localhost', 10)
+    address = ('localhost', 0)
     # let the kernel give us a port
     with TCPFeedbackServer(ip=address[0], port=address[1], handler=FeedbackHandler) as server:
         ip, port = server.server_address
@@ -149,12 +149,13 @@ elif __name__ == "__main__" and sys.version_info[0] == 3:
             response = s.recv(1024).decode('utf8')
             print('Received: "%s"' % response)
 
-            message = 'Done\n'
-            print('Sending : "%s"' % message)
-            len_sent = s.send(message.encode())
+            # raise Exception("This is a test exception")
+            # message = 'Done\n'
+            # print('Sending : "%s"' % message)
+            # len_sent = s.send(message.encode())
 
-            # Receive a response
-            response = s.recv(1024).decode('utf8')
-            print('Received: "%s"' % response)
+            # # Receive a response
+            # response = s.recv(1024).decode('utf8')
+            # print('Received: "%s"' % response)
 
     print(server.msgs)
