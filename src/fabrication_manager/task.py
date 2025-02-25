@@ -1,61 +1,74 @@
-from threading import Thread
+import time
+from multiprocessing import Process
 
 __all__ = [
     "Task"
 ]
 
-
 class Task(object):
-    def __init__(self, key=None):
+    def __init__(self, key=None, parallelizable=False):
         self.key = key
-        self.parallelizable = False
+        self.process = None
+        self.parallelizable = parallelizable
         self.is_completed = False
         self.is_running = False
-        self.stop_thread = False
         self.log_messages = []
 
     def __repr__(self):
-       # return 'Task(key = {self.key}, is_completed={self.is_completed}'
        return type(self).__name__
         
-    def perform(self, stop_thread):
-        self.stop_thread = stop_thread()
-        if not self.is_running and not self.is_completed:
-            self.is_running = True
-            self.log("---STARTING TASK---")
-            self.t = Thread(target=self.run,
-                            args=(lambda: self.stop_thread,))
-            self.t.daemon = True
-            self.t.start()
-        else:
-            if self.t.is_alive():
-                return False
-            else:
-                self.t.join(timeout=1)
-                del self.t
-                self.is_running = False
-                if not self.stop_thread:
-                    self.log("---COMPLETED TASK---")
-                    return True
-
-    def run(self, stop_thread):
-        """This method is specific to the type of task
-        Fill your code here for the type of action you want performed"""
-        # do something
-        finished = True
-        if finished:
+    def _run(self, results, interrupt_event):
+        """
+        Internal wrapper that runs the work function.
+        Because the work_func might be fully blocking, it does not check
+        the interrupt_event. If interrupt_event is set, we simply rely on the
+        process being terminated externally.
+        """
+        results.put(f"Task {self.key} started")
+        self.is_running = True
+        try:
+            self.work_func()
+        except Exception as e:
+            results.put(f"Task {self.key} encountered error: {e}")
+        # If we were not interrupted (i.e. process not terminated), mark as completed.
+        if not interrupt_event.is_set():
+            results.put(f"Task {self.key} completed")
             self.is_completed = True
+        else:
+            results.put(f"Task {self.key} interrupted")
+        self.is_running = False
 
-    def stop(self):
-        self.stop_thread = True
-        if hasattr(self, "t"):
-            self.t.join(timeout=1)
-            del self.t
+    def work_func(self):
+        """This is the function that should be overridden by subclasses."""
+        for i in range(4):
+            time.sleep(0.5)  # blocking sleep to simulate work
+
+    def start(self, results, interrupt_event):
+        """Starts the task in its own process if it hasn't been started already."""
+        if self.process is None:
+            self.process = Process(target=self._run, args=(results, interrupt_event))
+            self.process.start()
+            self.is_running = True
+
+    def join(self):
+        """Wait for the task's process to complete."""
+        if self.process:
+            self.process.join()
+            self.is_completed = True
+            self.is_running = False
+
+    def terminate(self):
+        """Forcefully stop the task's process."""
+        if self.process:
+            self.process.terminate()
+            self.is_completed = False
+            self.is_running = False
 
     def reset(self):
-        self.stop()
+        """Reset the task to its initial state."""
         self.is_completed = False
         self.is_running = False
+        self.log_messages = []
 
     def log(self, msg):
         if isinstance(msg, list):
