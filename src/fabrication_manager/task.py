@@ -27,7 +27,7 @@ class Task(object):
         results.put(f"Task {self.key} started")
         self.is_running = True
         try:
-            self.work_func()
+            self.work_func(results, interrupt_event)
         except Exception as e:
             results.put(f"Task {self.key} encountered error: {e}")
         # If we were not interrupted (i.e. process not terminated), mark as completed.
@@ -36,12 +36,15 @@ class Task(object):
             self.is_completed = True
         else:
             results.put(f"Task {self.key} interrupted")
-        self.is_running = False
+            self.is_completed = False
 
-    def work_func(self):
+    def work_func(self, results, interrupt_event):
         """This is the function that should be overridden by subclasses."""
         for i in range(4):
+            if interrupt_event.is_set():
+                return
             time.sleep(0.5)  # blocking sleep to simulate work
+            results.put(f"Task {self.key} step {i}...")
 
     def start(self, results, interrupt_event):
         """Starts the task in its own process if it hasn't been started already."""
@@ -54,8 +57,8 @@ class Task(object):
         """Wait for the task's process to complete."""
         if self.process:
             self.process.join()
-            self.is_completed = True
             self.is_running = False
+            self.process = None         
 
     def terminate(self):
         """Forcefully stop the task's process."""
@@ -79,9 +82,24 @@ class Task(object):
 
 
 if __name__ == '__main__':
-    import time
-    task = Task()
+    from multiprocessing import Queue, Event
+    
+    logs = []
+    results = Queue()
+    interrupt_event = Event()
+
+    task = Task(key = 0)
     print(task.is_completed)
-    task.perform(False)
-    time.sleep(1)
-    print(task.is_completed)
+    
+    task.start(results, interrupt_event)
+    print("Task started.")
+    task.join()
+    print("Task joined.")
+
+    while True:
+        try:
+            msg = results.get_nowait()
+            print("LOG:", msg)
+            logs.append(msg)
+        except Exception:
+            break

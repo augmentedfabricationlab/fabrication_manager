@@ -202,10 +202,10 @@ if __name__ == '__main__':
             print("Main program working...")
             time.sleep(0.5)
             # For demonstration, interrupt after 3 seconds.
-            if time.time() - start_time > 3:
-                print("Interrupting process...")
-                fab.interrupt()
-                break
+            # if time.time() - start_time > 3:
+            #     print("Interrupting process...")
+            #     fab.interrupt()
+            #     break
     except KeyboardInterrupt:
         fab.interrupt()
     
