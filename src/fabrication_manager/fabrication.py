@@ -1,9 +1,11 @@
 import time
 # from threading import Thread
 from multiprocessing import Process, Queue, Event
+import multiprocessing
+multiprocessing.set_executable(r"C:\Users\gido\.rhinocode\py39-rh8\python.exe")
 # from compas.datastructures import Graph
 # from fabrication_manager.utilities import nullcontext
-from fabrication_manager.communication import TCPFeedbackServer
+# from fabrication_manager.communication import TCPFeedbackServer
 
 __all__ = [
     "FabricationManager"
@@ -78,15 +80,10 @@ class FabricationManager(object):
         It sends log messages via the results Queue and runs tasks one after the other.
         """
         self.results.put("FABRICATION: ---STARTING FABRICATION ---")
-        if self.server_address[0] is not None:
-            self.results.put("Server address: " + str(self.server_address))
-            with TCPFeedbackServer(*self.server_address) as server:
-                self._task_loop(server)
-        else:
-            self._task_loop()
+        self._task_loop()
         self.results.put("FABRICATION: ---STOPPING FABRICATION ---")
 
-    def _task_loop(self, server=None):            
+    def _task_loop(self):            
          while self.tasks_available():
             self._cleanup()
 
@@ -122,11 +119,12 @@ class FabricationManager(object):
             self.fab_process = Process(target=self._run_tasks)
             # self.fab_process.daemon = True
             self.fab_process.start()
-            self.log("FABRICATION: Started task thread")
+            self.log("FABRICATION: Started task process")
         else:
             self.log("FABRICATION: No tasks available")
 
     def stop(self):
+        self.interrupt()
         self.close()
         self.log("FABRICATION: Stopped all processes")
 
@@ -147,9 +145,8 @@ class FabricationManager(object):
             for m in msg:
                 self.log(m)
         else:
-            if str(msg) not in self.log_messages:
-                self.log_messages.append(str(msg))
-                print(str(msg))
+            self.log_messages.append(str(msg))
+            print(str(msg))
 
     def poll_logs(self):
         """
@@ -161,6 +158,7 @@ class FabricationManager(object):
             try:
                 msg = self.results.get_nowait()
                 logs.append(msg)
+                self.log(msg)
             except Exception:
                 break
         return logs
@@ -183,7 +181,6 @@ class FabricationManager(object):
 
 if __name__ == '__main__':
     from fabrication_manager.task import Task
-    # fab = FabricationManager(server_address=("localhost", 50006))
     fab = FabricationManager()
     # Add tasks: sequential tasks (parallelizable False) and parallel tasks (parallelizable True)
     fab.add_task(Task(0, parallelizable=False))
@@ -201,11 +198,7 @@ if __name__ == '__main__':
                 print("LOG:", log)
             print("Main program working...")
             time.sleep(0.5)
-            # For demonstration, interrupt after 3 seconds.
-            # if time.time() - start_time > 3:
-            #     print("Interrupting process...")
-            #     fab.interrupt()
-            #     break
+
     except KeyboardInterrupt:
         fab.interrupt()
     
