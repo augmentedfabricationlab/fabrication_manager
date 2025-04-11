@@ -21,6 +21,6 @@ Describe typical classes found in project
 """
 
 from .communication import *
-# from .fabrication import *
+from .fabrication import *
 from .task import *
 from .utilities import *
